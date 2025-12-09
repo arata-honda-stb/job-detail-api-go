@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package job;
+
+option go_package = "job-detail-api-go/pkg/grpc";
+
+service JobService {
+  rpc GetJobs (GetJobsRequest) returns (GetJobsResponse);
+}
+
+message Job {
+  string job_id = 1;
+  string job_title = 2;
+  string job_content = 3;
+}
+
+message GetJobsRequest {
+  repeated string job_ids = 1;
+}
+
+message GetJobsResponse {
+  repeated Job jobs = 1;
+}
