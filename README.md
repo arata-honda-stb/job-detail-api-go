@@ -30,12 +30,6 @@ LocalStackが起動したら、以下のURLからデータの確認や登録が�
 [LocalStack Dashboard - Jobs Table](https://app.localstack.cloud/inst/default/resources/dynamodb/tables/Jobs/items)
 
 ※ 初回起動時は `docker/init/01_create_table.sh` により自動的にテーブル作成とテストデータ (`job_a`, `job_b`) の投入が行われます。
-※ もしテーブルが作成されていない場合は、プロジェクトルートにある `setup_local.sh` を実行して手動でセットアップしてください。
-
-```bash
-chmod +x setup_local.sh
-./setup_local.sh
-```
 
 ### 3. アプリケーションの起動
 LocalStackのエンドポイントを指定してGoアプリケーションを起動します。
