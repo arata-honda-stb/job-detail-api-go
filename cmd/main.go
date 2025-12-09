@@ -3,15 +3,18 @@ package main
 import (
 	"context"
 	"log"
-	"net/http"
+	"net"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"job-detail-api-go/internal"
+	pb "job-detail-api-go/pkg/grpc"
 )
 
 func main() {
@@ -48,16 +51,22 @@ func main() {
 		TableName: tableName,
 	}
 
-	// ルーティング設定
-	http.HandleFunc("/jobs", h.GetJobs)
-
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	log.Printf("Server starting on port %s...", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+	lis, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	s := grpc.NewServer()
+	pb.RegisterJobServiceServer(s, h)
+	reflection.Register(s)
+
+	log.Printf("gRPC server starting on port %s...", port)
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 	}
 }
